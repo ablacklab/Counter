@@ -31,7 +31,7 @@ body{
     margin-top: 0;
 }
 
-.msjs p{
+.msjs p , .msjs h4{
     background-color: rgb(234, 234, 234);
     padding: 8px;
     border-radius: 12px;
@@ -54,6 +54,11 @@ body{
 
 .divcel{
     display: none;
+}
+
+.statsmode{
+    flex-direction: column;
+    justify-content: flex-start;
 }
 
 

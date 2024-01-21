@@ -61,6 +61,7 @@ function clickmedia(stats, divcel){
 
 function details(stats){
   msjs.innerHTML = " "
+  msjs.classList.remove("statsmode");
 
   const nameuss = document.createElement("h2");
   nameuss.textContent = stats.uss;
@@ -122,8 +123,38 @@ function details(stats){
 
 }
 
+function stats(allinfo) {
+  msjs.innerHTML = " ";
+  msjs.classList.add("statsmode");
+
+  const top5Objects = allinfo
+  .sort((a, b) => b.rol.length - a.rol.length)
+  .slice(0, 5);
+  
+  const ussNames = top5Objects.map(obj => obj.uss);
+
+  console.log(ussNames);
+  console.log(top5Objects);
+
+  msjs.innerHTML = ` 
+  <h3>Top 5 con más mjs (en rol):</h3>
+  <p>1. ${top5Objects[0].uss} (${top5Objects[0].rol.length})</p>
+  <p>2. ${top5Objects[1].uss} (${top5Objects[1].rol.length})</p>
+  <p>3. ${top5Objects[2].uss} (${top5Objects[2].rol.length})</p>
+  <p>4. ${top5Objects[3].uss} (${top5Objects[3].rol.length})</p>
+  <p>5. ${top5Objects[4].uss} (${top5Objects[4].rol.length})</p>
+  `
+}
+
 function printmjs(mjs) {
     console.log("print");
+
+    const allinfo = [ ];
+
+    const statsbtn = document.createElement("button");
+    statsbtn.textContent = "Stats :)";
+    statsbtn.classList.add("statsbtn");
+    divmsj.appendChild(statsbtn);
 
     for (const [nombre, mensajes] of Object.entries(mjs)) {
         const div = document.createElement("div");
@@ -143,7 +174,7 @@ function printmjs(mjs) {
 
         //ahora calcular los off rol
         for (const mensaje of mensajes) {
-          if(mensaje.includes("<Media omitted>") || mensaje.includes("mensaje cuota", { ignoreCase: true }) || mensaje === "" || mensaje === " null" || mensaje.includes("<View once voice message omitted>")){
+          if(mensaje.includes("<Media omitted>") || mensaje === "" || mensaje === " null" || mensaje.includes("<View once voice message omitted>") || mensaje === " This message was deleted"){
             spam = spam+1;
             stats.spam.push(mensaje);
           } else {
@@ -157,13 +188,17 @@ function printmjs(mjs) {
         }
       }
 
-      console.log(`${nombre} emojis:`);
-      console.log(contarEmojis(mensajes));
+      allinfo.push(stats);
+
+      //console.log(`${nombre} emojis:`);
+      //console.log(contarEmojis(mensajes));
 
       div.textContent = `${nombre} - total: ${mensajes.length} - rol: ${msjrol} - offrol: ${mjsoff} - media: ${spam}`;
       div.addEventListener('click', ()=> {details(stats)})
 
       }
+
+      statsbtn.addEventListener(("click"), () => stats(allinfo));
 }
 
 function separarMensajes(chatExport) {
@@ -225,7 +260,7 @@ function counter(content) {
 
             const linessplit = chatLines.split('\n');
             
-            console.log(linessplit);
+
             const mjs = ignorarMensajesWhatsApp(separarMensajes(linessplit));
 
             printmjs(mjs)
