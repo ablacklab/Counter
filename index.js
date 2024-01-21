@@ -160,7 +160,7 @@ function printmjs(mjs) {
       console.log(`${nombre} emojis:`);
       console.log(contarEmojis(mensajes));
 
-      div.textContent = `<b>${nombre}<b> - total: ${mensajes.length} - rol: ${msjrol} - offrol: ${mjsoff} - media: ${spam}`;
+      div.textContent = `${nombre} - total: ${mensajes.length} - rol: ${msjrol} - offrol: ${mjsoff} - media: ${spam}`;
       div.addEventListener('click', ()=> {details(stats)})
 
       }
