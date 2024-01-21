@@ -160,7 +160,7 @@ function printmjs(mjs) {
       console.log(`${nombre} emojis:`);
       console.log(contarEmojis(mensajes));
 
-      div.textContent = `${nombre} - total: ${mensajes.length} - rol: ${msjrol} - offrol: ${mjsoff} - media: ${spam}`;
+      div.textContent = `<b>${nombre}<b> - total: ${mensajes.length} - rol: ${msjrol} - offrol: ${mjsoff} - media: ${spam}`;
       div.addEventListener('click', ()=> {details(stats)})
 
       }
@@ -227,6 +227,8 @@ function counter(content) {
             
             console.log(linessplit);
             const mjs = ignorarMensajesWhatsApp(separarMensajes(linessplit));
+
+            printmjs(mjs)
 }
 
 //acá el input solo manda el texto pa arriba
