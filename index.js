@@ -6,7 +6,7 @@ const msjs = document.querySelector(".msjs");
 let content = " "
 
 function esrol(mensaje){
-  if (mensaje.includes("//") || mensaje.includes("||") || mensaje.includes("\\") || mensaje.startsWith(" ;") || mensaje.endsWith("/") || mensaje.startsWith(` #`)){
+  if (mensaje.startsWith(" //") || mensaje.startsWith(" _//") || mensaje.endsWith("//") || mensaje.includes("||") || mensaje.includes("\\") || mensaje.startsWith(" ;") || mensaje.endsWith("/") || mensaje.endsWith(";;") || mensaje.startsWith(` #`) || mensaje.startsWith(` _#`) || mensaje.startsWith(' &&')){
     return false
   } else { 
     return true
@@ -106,7 +106,7 @@ function details(stats){
   });
   msjs.appendChild(offdiv);
 
-  const mediadiv = document.createElement("div");
+  /*const mediadiv = document.createElement("div");
   mediadiv.classList.add("mjspc");
   mediadiv.textContent = "Media"
   stats.spam.forEach(element => {
@@ -114,7 +114,7 @@ function details(stats){
     mensaje.textContent = element;
     mediadiv.appendChild(mensaje);
   });
-  msjs.appendChild(mediadiv);
+  msjs.appendChild(mediadiv);*/
 
   const divcel = document.createElement("div");
   divcel.classList.add("divcel");
@@ -173,8 +173,9 @@ function printmjs(mjs) {
         }
 
         //ahora calcular los off rol
-        for (const mensaje of mensajes) {
-          if(mensaje.includes("<Media omitted>") || mensaje === "" || mensaje === " null" || mensaje.includes("<View once voice message omitted>") || mensaje === " This message was deleted"){
+        for (const mensajeobj of mensajes) {
+          const mensaje = mensajeobj.mensaje;
+          if(mensaje.includes("<Media omitted>") || mensaje === "" || mensaje === " null" || mensaje.includes("<View once voice message omitted>") || mensaje === " This message was deleted" || mensaje.includes("<Multimedia omitido>")){
             spam = spam+1;
             stats.spam.push(mensaje);
           } else {
@@ -201,22 +202,39 @@ function printmjs(mjs) {
       statsbtn.addEventListener(("click"), () => stats(allinfo));
 }
 
-function separarMensajes(chatExport) {
-    const mensajesPorPersona = {};
-    for (const mensaje of chatExport) {
+function separarMensajes(chatExport, date) {
 
+  const chatfiltered = chatExport.filter(mensaje => mensaje.startsWith(date)); 
+  const primerElemento = chatfiltered[0];
+  const poselemento = chatExport.indexOf(primerElemento);
+
+  const chatfinal = chatExport.slice((poselemento-1) + 1);
+
+    const mensajesPorPersona = {};
+    for (const mensaje of chatfinal) {
       const posraya = mensaje.indexOf("-");
       const texto = mensaje.slice(posraya + 1 );
+      const datehour = mensaje.slice(0, posraya);
 
       const pospuntos = texto.indexOf(":");
-      const mensajeSinDosPuntos = texto.slice(pospuntos + 1 );
-      const nombreSinDosPuntos = texto.slice(0, pospuntos);
+      const msjtexto = texto.slice(pospuntos + 1 );
+      const nombre = texto.slice(0, pospuntos);
 
-      if (nombreSinDosPuntos) {
-        if (!mensajesPorPersona[nombreSinDosPuntos]) {
-          mensajesPorPersona[nombreSinDosPuntos] = [];
+      const poscoma = datehour.indexOf(",");
+      const hora = datehour.slice(poscoma + 1 );
+      const fecha = datehour.slice(0, poscoma);
+
+      const mensajefull = {
+        fecha: fecha,
+        hora: hora,
+        mensaje: msjtexto
+      }
+
+      if (nombre) {
+        if (!mensajesPorPersona[nombre]) {
+          mensajesPorPersona[nombre] = [];
         }
-        mensajesPorPersona[nombreSinDosPuntos].push(mensajeSinDosPuntos);
+        mensajesPorPersona[nombre].push(mensajefull);
       }
     }
     return mensajesPorPersona;
@@ -226,17 +244,37 @@ function ignorarMensajesWhatsApp(objeto) {
     const objetoNuevo = {};
   for (const key in objeto) {
     const array = objeto[key];
-    if (array.length > 1) {
+    if (array.length > 1 && !key.includes("changed this group's settings") && !key.includes("pinned a messag") && !key.includes("requested to join") && !key.match(/୧ ✿ › .* lef/)) {
       objetoNuevo[key] = array;
     }
   }
+
+  console.log(objetoNuevo)
   return objetoNuevo;
 }
 
 
 //este agarra el texto y lo pone en un array así bn bonito
-function counter(content) {
-    const lines = content.split('\n');
+function counter(texto, date) {
+  // 2024-03-12 => input
+  // 3/12/24 => output
+
+  const formattedDate = date.split('-');
+  var day = formattedDate[2];
+  var month = formattedDate[1];
+  const year = formattedDate[0].slice(2, 4);
+  if (month.startsWith("0")) {
+    month = month.slice(1);
+  }
+  if (day.startsWith("0")) {
+    day = day.slice(1);
+  }
+  const dateFormatted = `${month}/${day}/${year}`;
+
+  //const content = texto.split('CUT_HERE');
+
+  const lines = texto.split('\n');
+
     let combinedLines = [];
             let currentMessage = "";
             for (const line of lines) {
@@ -259,28 +297,31 @@ function counter(content) {
             const chatLines = combinedLines.join('\n'); // Unir líneas combinadas
 
             const linessplit = chatLines.split('\n');
-            
 
-            const mjs = ignorarMensajesWhatsApp(separarMensajes(linessplit));
+            const mjs = ignorarMensajesWhatsApp(separarMensajes(linessplit, dateFormatted));
 
             printmjs(mjs)
 }
 
 //acá el input solo manda el texto pa arriba
-const imgInput = document.createElement("input")
-imgInput.type = "file";
-imgInput.classList.add('imgInput');
-imgInput?.addEventListener("change", async () => {
-    const file = imgInput.files?.[0];
-    if (file) { 
+
+const forms = document.querySelector("#forms");
+const fileInput = document.querySelector("#file");
+
+forms.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const dataforms = new FormData(forms);
+    const date =  dataforms.get("date");
+    const file = fileInput.files[0];
+    if (file) {
         const reader = new FileReader();
         reader.onload = function(e) {
             content = e.target.result;
-            counter(content);
+            counter(content, date);
             };
         reader.readAsText(file);
     }
-});     
-div.appendChild(imgInput);
+});
+
 
 
