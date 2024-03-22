@@ -78,6 +78,10 @@ body{
     justify-content: flex-start;
 }
 
+.statsbtn{
+    display: none;
+}
+
 
 @media (max-width: 800px) {
     
@@ -87,8 +91,6 @@ body{
     }
 
     .divmsj{
-        height: 25vh;
-        overflow-y: scroll;
         overflow-x: scroll;
         width: 100%;
     }
