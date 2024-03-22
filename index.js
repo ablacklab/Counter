@@ -3,10 +3,10 @@ console.log("hola");
 const div = document.querySelector(".divall");
 const divmsj = document.querySelector(".divmsj");
 const msjs = document.querySelector(".msjs");
-let content = " "
+let content = " ";
 
 function esrol(mensaje){
-  if (mensaje.startsWith(" //") || mensaje.startsWith(" _//") || mensaje.endsWith("//") || mensaje.includes("||") || mensaje.includes("\\") || mensaje.startsWith(" ;") || mensaje.endsWith("/") || mensaje.endsWith(";;") || mensaje.startsWith(` #`) || mensaje.startsWith(` _#`) || mensaje.startsWith(' &&')){
+  if (mensaje.startsWith(" //") || mensaje.startsWith(" _//") || mensaje.endsWith("//") || mensaje.includes("||") || mensaje.includes("\\") || mensaje.startsWith(" ;") || mensaje.endsWith("/") || mensaje.endsWith(";;") || mensaje.startsWith(` #`) || mensaje.startsWith(` _#`) || mensaje.startsWith(' &&') || mensaje.startsWith(' -') || mensaje === ' .'){
     return false
   } else { 
     return true
@@ -156,14 +156,8 @@ function printmjs(mjs) {
     statsbtn.classList.add("statsbtn");
     divmsj.appendChild(statsbtn);
 
+    //HACER EL NUEVO ARRAY CON LOS MENSAJES
     for (const [nombre, mensajes] of Object.entries(mjs)) {
-        const div = document.createElement("div");
-        
-        divmsj.appendChild(div);
-
-        let msjrol = 0;
-        let mjsoff = 0;
-        let spam = 0;
 
         const stats = {
           uss: nombre,
@@ -176,14 +170,11 @@ function printmjs(mjs) {
         for (const mensajeobj of mensajes) {
           const mensaje = mensajeobj.mensaje;
           if(mensaje.includes("<Media omitted>") || mensaje === "" || mensaje === " null" || mensaje.includes("<View once voice message omitted>") || mensaje === " This message was deleted" || mensaje.includes("<Multimedia omitido>")){
-            spam = spam+1;
             stats.spam.push(mensaje);
           } else {
             if (esrol(mensaje)){
-              msjrol = msjrol+1;
               stats.rol.push(mensaje)
             } else {
-              mjsoff = mjsoff+1;
               stats.off.push(mensaje);
             }
         }
@@ -194,9 +185,22 @@ function printmjs(mjs) {
       //console.log(`${nombre} emojis:`);
       //console.log(contarEmojis(mensajes));
 
-      div.textContent = `${nombre} - total: ${mensajes.length} - rol: ${msjrol} - offrol: ${mjsoff} - media: ${spam}`;
-      div.addEventListener('click', ()=> {details(stats)})
+      /*div.textContent = `${nombre} - total: ${mensajes.length} - rol: ${msjrol} - offrol: ${mjsoff} - media: ${spam}`;
+      div.addEventListener('click', ()=> {details(stats)})*/
+      }
 
+      const organizedarray = allinfo.sort((a, b) => b.rol.length - a.rol.length);
+      for (const stats of organizedarray) {
+        const div = document.createElement("div");
+        div.classList.add("mensajediv");
+
+        div.innerHTML = `
+        <p><b>${stats.rol.length}</b> ${stats.uss}</p>
+        <p>Total: ${stats.off.length + stats.rol.length + stats.spam.length} - Off: ${stats.off.length} - Media: ${stats.spam.length}</p>
+        `
+        
+        div.addEventListener('click', ()=> {details(stats)})
+        divmsj.appendChild(div);
       }
 
       statsbtn.addEventListener(("click"), () => stats(allinfo));
@@ -248,8 +252,6 @@ function ignorarMensajesWhatsApp(objeto) {
       objetoNuevo[key] = array;
     }
   }
-
-  console.log(objetoNuevo)
   return objetoNuevo;
 }
 
