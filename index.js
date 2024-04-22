@@ -6,7 +6,7 @@ const msjs = document.querySelector(".msjs");
 let content = " ";
 
 function esrol(mensaje){
-  if (mensaje.startsWith(" //") || mensaje.startsWith(" _//") || mensaje.endsWith("//") || mensaje.includes("||") || mensaje.includes("\\") || mensaje.startsWith(" ;") || mensaje.endsWith("/") || mensaje.endsWith(";;") || mensaje.startsWith(` #`) || mensaje.startsWith(` _#`) || mensaje.startsWith(' &&') || mensaje.startsWith(' -') || mensaje === ' .'){
+  if (mensaje.startsWith(" //") || mensaje.startsWith(" _//") || mensaje.endsWith("//") || mensaje.endsWith("//_") || mensaje.startsWith(" ||") || mensaje.endsWith("||") || mensaje.startsWith(" |") || mensaje.startsWith(" _•||") || mensaje.includes("\\") || mensaje.startsWith(" ;") || mensaje.endsWith("/") || mensaje.endsWith(";;") || mensaje.startsWith(` #`) || mensaje.startsWith(` _#`) || mensaje.startsWith(' &&') || mensaje.startsWith(' -') || mensaje === ' .' || mensaje.endsWith("|")){
     return false
   } else { 
     return true
@@ -146,8 +146,47 @@ function stats(allinfo) {
   `
 }
 
+function statsHora(mjs) {
+
+  const statsxHora = {
+    AM: {},
+    PM: {}
+  };
+
+  for (const uss in mjs) {
+    for (const mensaje of mjs[uss]) {
+      const hora = mensaje.hora;
+
+      const mainhora = hora.split(":")[0];
+      const ampm = hora.split(' ')[1].split(' ')[1];
+
+      if (ampm === "AM"){
+        if (!statsxHora.AM[mainhora]) {
+          statsxHora.AM[mainhora] = { mjs: 0, uss: {} };
+        }
+        statsxHora.AM[mainhora].mjs++;
+        if (!statsxHora.AM[mainhora].uss[uss]) {
+          statsxHora.AM[mainhora].uss[uss] = 0;
+        }
+        statsxHora.AM[mainhora].uss[uss]++;
+      } else {
+        if (!statsxHora.PM[mainhora]) {
+          statsxHora.PM[mainhora] = { mjs: 0, uss: {} };
+        }
+        statsxHora.PM[mainhora].mjs++;
+        if (!statsxHora.PM[mainhora].uss[uss]) {
+          statsxHora.PM[mainhora].uss[uss] = 0;
+        }
+        statsxHora.PM[mainhora].uss[uss]++;
+      }
+    }
+  }
+
+  console.log(statsxHora);
+};
+
 function printmjs(mjs) {
-    console.log("print");
+    statsHora(mjs);
 
     const allinfo = [ ];
 
@@ -161,6 +200,8 @@ function printmjs(mjs) {
 
         const stats = {
           uss: nombre,
+          rolnumber: 0,
+          bonus: 0,
           rol: [],
           off: [],
           spam: [],
@@ -173,6 +214,12 @@ function printmjs(mjs) {
             stats.spam.push(mensaje);
           } else {
             if (esrol(mensaje)){
+              if (mensaje.length > 766){
+                stats.rolnumber = stats.rolnumber + 15;
+                stats.bonus++;
+              } else {
+                stats.rolnumber++;
+              }
               stats.rol.push(mensaje)
             } else {
               stats.off.push(mensaje);
@@ -189,14 +236,14 @@ function printmjs(mjs) {
       div.addEventListener('click', ()=> {details(stats)})*/
       }
 
-      const organizedarray = allinfo.sort((a, b) => b.rol.length - a.rol.length);
+      const organizedarray = allinfo.sort((a, b) => b.rolnumber - a.rolnumber);
       for (const stats of organizedarray) {
         const div = document.createElement("div");
         div.classList.add("mensajediv");
 
         div.innerHTML = `
-        <p><b>${stats.rol.length}</b> ${stats.uss}</p>
-        <p>Total: ${stats.off.length + stats.rol.length + stats.spam.length} - Off: ${stats.off.length} - Media: ${stats.spam.length}</p>
+        <p><b>${stats.rolnumber}</b> ${stats.uss}</p>
+        <p>Total: ${stats.off.length + stats.rol.length + stats.spam.length} - Off: ${stats.off.length + stats.spam.length} - Bonus: ${stats.bonus}</p>
         `
         
         div.addEventListener('click', ()=> {details(stats)})
