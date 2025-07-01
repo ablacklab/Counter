@@ -7,25 +7,21 @@ let content = " ";
 
 function esrol(mensaje) {
   if (
-    mensaje.startsWith(" //") ||
-    mensaje.startsWith(" _//") ||
-    mensaje.endsWith("//") ||
-    mensaje.endsWith("//_") ||
-    mensaje.startsWith(" ||") ||
-    mensaje.endsWith("||") ||
-    mensaje.startsWith(" |") ||
-    mensaje.startsWith(" _•||") ||
+    mensaje.includes("//") ||
+    mensaje.includes("||") ||
     mensaje.includes("\\") ||
+    //
+    mensaje.startsWith(" |") ||
     mensaje.startsWith(" ;") ||
-    mensaje.endsWith("/") ||
-    mensaje.endsWith(";;") ||
     mensaje.startsWith(` #`) ||
     mensaje.startsWith(` _#`) ||
     mensaje.startsWith(" &&") ||
     mensaje.startsWith(" -") ||
-    mensaje === " ." ||
+    //
     mensaje.endsWith("|") ||
-    mensaje.endsWith("//•")
+    mensaje.endsWith(";;") ||
+    //
+    mensaje === " ."
   ) {
     return false;
   } else {
