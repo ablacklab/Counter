@@ -378,7 +378,10 @@ function ignorarMensajesWhatsApp(objeto) {
       !key.includes("changed this group's settings") &&
       !key.includes("pinned a messag") &&
       !key.includes("requested to join") &&
-      !key.match(/୧ ✿ › .* lef/)
+      !key.match(/୧ ✿ › * lef/) &&
+      !key.match("joined using this") &&
+      !key.match("added") &&
+      !key.match("removed")
     ) {
       objetoNuevo[key] = array;
     }
