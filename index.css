@@ -73,14 +73,6 @@ body{
     display: none;
 }
 
-.statsmode{
-    flex-direction: column;
-    justify-content: flex-start;
-}
-
-.statsbtn{
-    display: none;
-}
 
 
 @media (max-width: 800px) {
