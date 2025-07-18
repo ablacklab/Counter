@@ -21,11 +21,15 @@
   <body>
     <div class="divall">
       <form action="" id="forms">
+        <small>Número de participantes</small>
+        <input type="number" name="number" id="number" min="1" max="1000" />
         <input type="date" name="date" id="date" />
         <input type="file" name="file" id="file" />
         <button type="submit">Contar</button>
       </form>
     </div>
+
+    <p class="participantsInfo"></p>
 
     <div class="stats">
       <div class="divmsj"></div>

@@ -3,7 +3,14 @@ console.log("hola");
 const div = document.querySelector(".divall");
 const divmsj = document.querySelector(".divmsj");
 const msjs = document.querySelector(".msjs");
+const numberInput = document.querySelector("#number");
+const participantsText = document.querySelector(".participantsInfo");
+
+let participantsNumber = 0;
 let content = " ";
+
+const actualUsers = [];
+const leftMessages = [];
 
 function esrol(mensaje) {
   if (
@@ -345,6 +352,8 @@ function separarMensajes(chatExport, date) {
     const msjtexto = texto.slice(pospuntos + 1);
     const nombre = texto.slice(0, pospuntos);
 
+    actualUsers.push(nombre);
+
     const poscoma = datehour.indexOf(",");
     const hora = datehour.slice(poscoma + 1);
     const fecha = datehour.slice(0, poscoma);
@@ -370,16 +379,27 @@ function ignorarMensajesWhatsApp(objeto) {
   for (const key in objeto) {
     const array = objeto[key];
     if (
-      array.length > 1 &&
+      //array.length > 1 &&
       !key.includes("changed this group's settings") &&
       !key.includes("pinned a messag") &&
       !key.includes("requested to join") &&
-      !key.match(/୧ ✿ › * lef/) &&
-      !key.match("joined using this") &&
-      !key.match("added") &&
-      !key.match("removed")
+      !key.includes("left") &&
+      !key.includes("joined using this") &&
+      !key.includes("added") &&
+      !key.includes("removed") &&
+      !key.includes("joined from the communit") &&
+      !key.includes("changed th")
     ) {
       objetoNuevo[key] = array;
+    } else {
+      if (
+        key.includes("left") ||
+        key.includes("removed") ||
+        key.includes("joined") ||
+        key.includes("added")
+      ) {
+        leftMessages.push(key);
+      }
     }
   }
 
@@ -389,7 +409,6 @@ function ignorarMensajesWhatsApp(objeto) {
 
 //este agarra el texto y lo pone en un array así bn bonito
 function counter(texto, date) {
-  console.log(texto);
   // 2024-03-12 => input
   // 3/12/24 => output
 
@@ -432,16 +451,63 @@ function counter(texto, date) {
 
   const linessplit = chatLines.split("\n");
 
-  console.log(linessplit);
   console.log(`Fecha: ${dateFormatted}`);
 
   const mjs = ignorarMensajesWhatsApp(
     separarMensajes(linessplit, dateFormatted)
   );
 
+  calcularFantasmas(
+    leftMessages,
+    Object.keys(mjs).map((x) => x.trim().toLocaleLowerCase())
+  );
+
   console.log(mjs);
 
   printmjs(mjs);
+}
+
+function calcularFantasmas(log, participantes) {
+  const gente = participantes.map((x) => x.slice(0, -1));
+  let actualPeople = 0;
+  const left = new Set();
+
+  console.log(log);
+
+  for (let event of log) {
+    event = event.toLowerCase();
+
+    if (event.includes("removed")) {
+      const name = event.split("removed")[1].trim();
+      left.add(name);
+    } else if (event.includes("left")) {
+      const name = event.split("left")[0].trim();
+      left.add(name);
+    } else if (event.includes("joined from the communit")) {
+      const name = event.split("joined from the communit")[0].trim();
+      left.delete(name);
+    } else if (event.includes("added")) {
+      const name = event.split("added")[1].trim();
+      left.delete(name);
+    }
+  }
+
+  const genteQueSeFue = Array.from(left);
+
+  gente.forEach((g) => {
+    if (genteQueSeFue.includes(g)) {
+      console.log(`SE FUE/LO SACARON: ${g}`);
+    } else {
+      actualPeople++;
+      console.log(`ACTUAL: ${g}`);
+    }
+  });
+
+  console.log(participantsNumber);
+
+  participantsText.textContent = `Personas con 0 mensajes: ${
+    participantsNumber - actualPeople
+  }`;
 }
 
 //acá el input solo manda el texto pa arriba
@@ -452,6 +518,8 @@ const fileInput = document.querySelector("#file");
 
 forms.addEventListener("submit", async (e) => {
   e.preventDefault();
+  participantsNumber = parseInt(numberInput.value) || 0;
+  console.log(`Número de participantes: ${participantsNumber}`);
   const dataforms = new FormData(forms);
   const date = dataforms.get("date");
   const file = fileInput.files[0];
