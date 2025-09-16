@@ -1,0 +1,43 @@
+.details {
+  display: none;
+}
+
+.details.open {
+  display: flex;
+  flex-direction: row;
+  position: relative;
+  gap: 20px;
+  padding-top: 20px;
+  width: 80%;
+  overflow-y: scroll;
+}
+
+.details h3 {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.details-off {
+  width: 50%;
+}
+
+.details-close {
+  position: absolute;
+  top: 0;
+  right: 8px;
+  cursor: pointer;
+}
+
+@media (max-width: 600px) {
+  .details.open {
+    flex-direction: column;
+    width: 100%;
+    height: max-content;
+    overflow-y: visible;
+  }
+
+  .details-off {
+    width: 100%;
+  }
+}

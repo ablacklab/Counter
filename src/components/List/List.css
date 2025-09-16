@@ -1,0 +1,25 @@
+.list {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+}
+
+.list.details-open {
+  width: 20%;
+  display: flex;
+  flex-wrap: wrap;
+  overflow-y: scroll;
+}
+
+@media (max-width: 600px) {
+  .list {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  .list.details-open {
+    width: 100%;
+    overflow-y: visible;
+  }
+}

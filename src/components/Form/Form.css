@@ -1,0 +1,10 @@
+.results-form {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+
+.results-form button {
+  width: max-content;
+}

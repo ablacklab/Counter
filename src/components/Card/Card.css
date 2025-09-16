@@ -1,0 +1,42 @@
+.card.details-open {
+  width: 90%;
+}
+
+.card {
+  display: flex;
+  gap: 12px;
+  padding: 12px 4px;
+  border-radius: 8px;
+  height: max-content;
+  width: 300px;
+}
+
+.card-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+}
+
+.card-info p {
+  margin: 0;
+}
+
+.card-info small {
+  color: #666;
+}
+
+.selected {
+  background-color: #333;
+}
+
+.card:hover {
+  background-color: #222;
+  cursor: pointer;
+}
+
+@media (max-width: 600px) {
+  .card {
+    width: 100%;
+  }
+}
