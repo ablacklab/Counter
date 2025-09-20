@@ -7,6 +7,8 @@ function isRoleplayMessage(message: string): boolean {
     message.includes("||") ||
     message.includes("\\") ||
     message.startsWith(" |") ||
+    message.startsWith(" /") ||
+    message.startsWith(" >") ||
     message.startsWith(" ;") ||
     message.startsWith(` #`) ||
     message.startsWith(` _#`) ||
@@ -14,6 +16,7 @@ function isRoleplayMessage(message: string): boolean {
     message.startsWith(" -") ||
     message.endsWith("|") ||
     message.endsWith(";;") ||
+    message.endsWith("/") ||
     message === " ."
   ) {
     return false;
