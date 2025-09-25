@@ -6,6 +6,8 @@ function isRoleplayMessage(message: string): boolean {
     message.includes("//") ||
     message.includes("||") ||
     message.includes("\\") ||
+    message.includes("ᒐɩ⳽tᥲ ᑯᥱ ρᥱɾ⳽oᥒᥲʝᥱ⳽") ||
+    message.includes("`[actualización]`") ||
     message.startsWith(" |") ||
     message.startsWith(" /") ||
     message.startsWith(" >") ||
